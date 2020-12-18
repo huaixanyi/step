@@ -1,6 +1,7 @@
 package com.huaxianyi.caffeinecache.anno;
 
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
 import java.lang.annotation.*;
@@ -13,7 +14,10 @@ import java.lang.annotation.*;
 @Caching(put = {
         @CachePut(value = "cacheMap", key = "#entity.id"),
         @CachePut(value = "cacheMap", key = "#entity.name"),
-})
+},
+        cacheable =
+        @Cacheable(cacheNames = "cacheMap", unless = "#result == null")
+)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

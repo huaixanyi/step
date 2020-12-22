@@ -1,0 +1,16 @@
+server:
+  port: 8020
+spring:
+  application:
+    name: spring-boot-admin
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: 888ac051-ae5f-44f1-940a-30c7824a0e91
+        cluster-name: HZ
+
+  security:
+    user:
+      password: pwd
+      name: user

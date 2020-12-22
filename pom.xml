@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>redis</module>
+        <module>acutator</module>
     </modules>
 
     <properties>

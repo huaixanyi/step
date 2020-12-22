@@ -20,3 +20,7 @@ spring cache常用注解为：@Cacheable、@CachePut、@CacheEvit
 @Cacheable 的作用：适用于获取数据，如果缓存中有数据，不在调用注解方法；
 @CachePut 的作用：适合于插入数据和更新数据。一定会调用真实方法，再将方法返回值保存到缓存；
 @CacheEvict 的作用：适合于删除数据。
+
+spring boot + spring cache 实现两级缓存（redis + caffeine）
+
+<a href="https://gitee.com/uploads/images/2018/0131/093021_342bd812_1092395.png">aaa</a>

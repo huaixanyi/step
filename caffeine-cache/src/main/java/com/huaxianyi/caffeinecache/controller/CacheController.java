@@ -1,14 +1,19 @@
 package com.huaxianyi.caffeinecache.controller;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.huaxianyi.caffeinecache.domain.CacheEntity;
 import com.huaxianyi.caffeinecache.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.data.redis.cache.RedisCache;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
@@ -51,13 +56,31 @@ public class CacheController {
 
     @Autowired
     @SuppressWarnings("all")
-    private CacheManager cacheManager;
+    private RedisCacheManager redisCacheManager;
+
+    @Autowired
+    @SuppressWarnings("all")
+    private CaffeineCacheManager caffeineCacheManager;
 
     @GetMapping("/caches")
     public ResponseEntity<?> getCache() {
-        Map<String, ConcurrentMap> cacheMap = cacheManager.getCacheNames().stream()
+        Map<String, Object> map = new HashMap<>();
+        Collection<String> cacheNames = redisCacheManager.getCacheNames();
+        for (String cacheName : cacheNames) {
+            RedisCache cache = (RedisCache) redisCacheManager.getCache(cacheName);
+            Cache.ValueWrapper valueWrapper;
+            if (cache != null && (valueWrapper = cache.get(cache.getName())) != null) {
+                map.put(cache.getName(), valueWrapper.get());
+            }
+        }
+        return ResponseEntity.ok(map);
+    }
+
+    @GetMapping("/cachesY")
+    public ResponseEntity<?> getCaches() {
+        Map<String, ConcurrentMap> cacheMap = caffeineCacheManager.getCacheNames().stream()
                 .collect(Collectors.toMap(Function.identity(), name -> {
-                    Cache cache = (Cache) cacheManager.getCache(name).getNativeCache();
+                    com.github.benmanes.caffeine.cache.Cache cache = (com.github.benmanes.caffeine.cache.Cache) caffeineCacheManager.getCache(name).getNativeCache();
                     return cache.asMap();
                 }));
         return ResponseEntity.ok(cacheMap);

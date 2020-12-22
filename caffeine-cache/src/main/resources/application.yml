@@ -1,13 +1,29 @@
 server:
   port: 8888
 
-spring:
-  cache:
-    caffeine:
-      spec: maximumSize=500
-#      , expireAfterAccess=30s
 logging:
   pattern:
     console: "%-5level - %msg%n"
   level:
     - error
+
+spring:
+  redis:
+    database: 0 # Database index used by the connection factory.
+#    url: redis://user:@127.0.0.1:6379 # Connection URL. Overrides host, port, and password. User is ignored. Example: redis://user:password@example.com:6379
+    host: 104.128.92.64
+    port: 6379
+    password: # Login password of the redis server.
+    ssl: false # Whether to enable SSL support.
+    timeout: 5000 # Connection timeout.
+  cache:
+    type: Redis
+
+#两级缓存的配置
+    multi:
+      caffeine:
+        expireAfterAccess: 5000
+      redis:
+        defaultExpiration: 60000
+  #spring cache配置
+    cache-names: userIdCache,userNameCache
